@@ -1,0 +1,9 @@
+services:
+  app:
+    build: .
+    restart: always
+    environment:
+      PORT: 8080
+      JWT_SECRET: finance_app_kuliah_rahasia_2024
+    ports:
+      - "8080:8080"
