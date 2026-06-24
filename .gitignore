@@ -43,3 +43,38 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# ========================
+# SENSITIVE / SECRET FILES
+# ========================
+# Firebase / Google Service Account - JANGAN PERNAH DI-COMMIT!
+**/serviceAccountKey.json
+**/google-services.json
+**/*.env
+.env
+.env.*
+
+# ========================
+# COMPILED BINARIES & BUILD
+# ========================
+backend/finance_backend_linux
+backend/finance_backend_linux.zip
+backend.zip
+*.zip
+
+# ========================
+# UTILITY / DEBUG SCRIPTS (tidak perlu di repo)
+# ========================
+check_docker.py
+check_logs.py
+check_ngrok.py
+check_ngrok2.py
+check_vps.py
+debug_ngrok.py
+deploy.py
+deploy_vps.py
+fix_dns_ngrok.py
+fix_ngrok.py
+restart_ngrok.py
+test_delete.py
+test_ngrok.py

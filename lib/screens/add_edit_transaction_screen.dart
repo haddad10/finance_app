@@ -67,9 +67,24 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
       return;
     }
 
-    setState(() => _isLoading = true);
     final tx = context.read<TransactionProvider>();
     final amount = double.parse(_amountCtrl.text.replaceAll(',', '').replaceAll('.', ''));
+
+    // ── Validasi saldo: jangan sampai minus ──────────────────────────────────
+    if (_type == 'expense' && !isEditing) {
+      final currentBalance = (tx.balance['balance'] as num?)?.toDouble() ?? 0.0;
+      if (amount > currentBalance) {
+        _showError(
+          'Saldo tidak cukup!\n\n'
+          'Saldo kamu: Rp ${currentBalance.toStringAsFixed(0)}\n'
+          'Pengeluaran: Rp ${amount.toStringAsFixed(0)}\n\n'
+          'Tambah pemasukan dulu ya!',
+        );
+        return;
+      }
+    }
+
+    setState(() => _isLoading = true);
 
     bool success;
     if (isEditing) {

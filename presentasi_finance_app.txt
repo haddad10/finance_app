@@ -1,0 +1,259 @@
+================================================================
+         PRESENTASI APLIKASI FINANCE TRACKER
+         Manajemen Keuangan Pribadi Berbasis Mobile
+================================================================
+
+
+================================================================
+SLIDE 1 - COVER / JUDUL
+================================================================
+
+Judul       : Finance Tracker
+Subjudul    : Aplikasi Manajemen Keuangan Pribadi Berbasis Flutter
+Versi       : 1.0.0
+Teknologi   : Flutter (Mobile) + Go (Backend) + Firebase Firestore (Database)
+
+
+================================================================
+SLIDE 2 - LATAR BELAKANG DAN TUJUAN
+================================================================
+
+>> LATAR BELAKANG
+
+Banyak orang kesulitan dalam mengelola keuangan pribadi mereka sehari-hari.
+Pencatatan pemasukan dan pengeluaran masih sering dilakukan secara manual
+(buku catatan atau spreadsheet) yang tidak praktis dan rawan kehilangan data.
+Di era digital ini, dibutuhkan sebuah aplikasi mobile yang mudah digunakan,
+real-time, dan aman untuk membantu pengguna memantau kondisi keuangan mereka
+kapan saja dan di mana saja.
+
+>> TUJUAN APLIKASI
+
+1. Memudahkan pengguna mencatat pemasukan (income) dan pengeluaran (expense)
+   secara cepat dan terorganisir.
+
+2. Memberikan gambaran kondisi keuangan secara real-time melalui dashboard
+   yang informatif, menampilkan total saldo, pemasukan, dan pengeluaran.
+
+3. Menyajikan laporan dan grafik keuangan berdasarkan kategori agar pengguna
+   dapat mengidentifikasi pola pengeluaran mereka.
+
+4. Menyediakan fitur insight dan statistik keuangan untuk membantu pengguna
+   mengambil keputusan finansial yang lebih baik.
+
+5. Membangun sistem autentikasi yang aman sehingga data keuangan setiap
+   pengguna terlindungi dan bersifat pribadi.
+
+
+================================================================
+SLIDE 3 - FITUR UTAMA APLIKASI
+================================================================
+
+>> 1. AUTENTIKASI PENGGUNA
+   - Registrasi akun baru dengan username, email, dan password
+   - Login dengan username dan password (JWT Token Authentication)
+   - Data sesi tersimpan di perangkat (SharedPreferences)
+   - Logout aman dengan penghapusan token lokal
+
+>> 2. DASHBOARD UTAMA
+   - Tampilan saldo total (Total Balance) secara real-time
+   - Ringkasan total pemasukan dan total pengeluaran
+   - Daftar transaksi terbaru
+   - Dukungan Dark Mode dan Light Mode
+
+>> 3. PENCATATAN TRANSAKSI
+   - Tambah transaksi baru (pemasukan / pengeluaran)
+   - Pilih kategori transaksi (Makanan, Transport, Gaji, Hiburan, dll.)
+   - Edit transaksi yang sudah ada
+   - Hapus transaksi
+   - Setiap transaksi memiliki ID unik, kategori, jumlah, catatan, dan waktu
+
+>> 4. LAPORAN KEUANGAN
+   - Laporan ringkasan keuangan per periode
+   - Fitur berbagi laporan (Share Report) ke aplikasi lain
+
+>> 5. GRAFIK DAN INSIGHT
+   - Visualisasi pengeluaran berdasarkan kategori (fl_chart)
+   - Statistik pemasukan per kategori
+   - Tampilan grafik interaktif untuk analisis keuangan
+
+>> 6. MANAJEMEN PROFIL
+   - Lihat dan edit profil pengguna
+   - Upload foto profil (image_picker)
+   - Informasi akun: username, email, tanggal bergabung
+
+>> 7. PENGATURAN TEMA
+   - Toggle antara Dark Mode dan Light Mode
+   - Preferensi tema tersimpan secara lokal
+
+
+================================================================
+SLIDE 4 - DESAIN DATABASE
+================================================================
+
+>> PLATFORM DATABASE
+   Firebase Firestore (NoSQL Cloud Database)
+   - Real-time sync
+   - Skalabel dan serverless
+   - Keamanan berbasis aturan Firestore
+
+>> KOLEKSI (COLLECTION) UTAMA
+
+--------------------------------------------------------------
+KOLEKSI: users
+--------------------------------------------------------------
+Field           | Tipe      | Keterangan
+----------------|-----------|----------------------------------
+id              | Integer   | ID numerik berurutan (1, 2, 3...)
+username        | String    | Nama pengguna (unik)
+email           | String    | Alamat email pengguna
+password_hash   | String    | Password yang sudah di-hash (bcrypt)
+photo_url       | String    | URL foto profil (opsional)
+created_at      | String    | Waktu registrasi (format RFC3339)
+
+Catatan: Document Key = ID numerik sebagai string (contoh: "1", "2", "3")
+
+--------------------------------------------------------------
+KOLEKSI: transactions
+--------------------------------------------------------------
+Field       | Tipe      | Keterangan
+------------|-----------|--------------------------------------
+id          | Integer   | ID numerik berurutan per user
+user_id     | String    | Referensi ke ID pengguna pemilik
+type        | String    | Jenis: "income" atau "expense"
+amount      | Float64   | Jumlah nominal transaksi
+category    | String    | Kategori transaksi (Makanan, Gaji, dll.)
+note        | String    | Catatan tambahan transaksi
+created_at  | String    | Waktu transaksi dibuat (format RFC3339)
+
+Catatan: Document Key = format "{userID}_{numericID}" (contoh: "1_1", "1_2")
+         untuk memastikan keunikan antar pengguna.
+
+--------------------------------------------------------------
+KOLEKSI: counters (Helper Collection)
+--------------------------------------------------------------
+Document Key                | Field | Keterangan
+----------------------------|-------|---------------------------
+"users"                     | count | Counter ID user berikutnya
+"transactions_{userID}"     | count | Counter ID transaksi per user
+
+>> RELASI DATA
+   - Satu user dapat memiliki banyak transaksi (One-to-Many)
+   - Setiap transaksi terikat ke user melalui field "user_id"
+   - Validasi kepemilikan dilakukan di sisi backend sebelum update/delete
+
+
+================================================================
+SLIDE 5 - RUTE API (API ENDPOINTS)
+================================================================
+
+>> TECH STACK BACKEND
+   - Bahasa    : Go (Golang)
+   - Framework : Chi Router (github.com/go-chi/chi)
+   - Database  : Firebase Firestore
+   - Auth      : JWT (JSON Web Token) - HS256
+   - Deploy    : Docker + Docker Compose, Port 8080
+
+>> BASE URL
+   http://<server-address>:8080
+
+Daftar API Endpoint
+
+Auth:
+  POST /register: Registrasi akun.
+  POST /login: Autentikasi dan mendapatkan token.
+
+Transactions:
+  GET /transactions (Publik): Menampilkan semua transaksi user.
+  GET /{userID}/transactions (Publik): Menampilkan transaksi berdasarkan ID user.
+  POST /transactions (Privat): Membuat transaksi baru.
+  PUT /transactions/:id & DELETE /transactions/:id (Privat): Mengedit dan menghapus
+    transaksi. (Catatan: Dilengkapi validasi keamanan sehingga pengguna hanya bisa
+    memodifikasi transaksi miliknya sendiri).
+
+Balance & Stats:
+  GET /balance (Privat): Melihat ringkasan saldo, total pemasukan, dan pengeluaran.
+  GET /stats (Privat): Melihat statistik keuangan berdasarkan kategori.
+
+
+================================================================
+SLIDE 6 - ARSITEKTUR TEKNIS
+================================================================
+
+>> ARSITEKTUR SISTEM
+
+   [Flutter Mobile App]
+         |
+         | HTTP Request (JSON)
+         |
+   [Go Backend - Chi Router]
+         |
+         | Firestore SDK
+         |
+   [Firebase Firestore - Cloud NoSQL DB]
+
+>> TEKNOLOGI YANG DIGUNAKAN
+
+FRONTEND (Flutter):
+   - Flutter SDK >= 3.10.0 & Dart >= 3.0.0
+   - Provider (State Management)
+   - http (HTTP Client)
+   - fl_chart (Grafik)
+   - shared_preferences (Penyimpanan lokal)
+   - google_fonts (Tipografi)
+   - image_picker (Upload foto profil)
+   - intl (Format mata uang & tanggal)
+
+BACKEND (Go):
+   - Go (Golang)
+   - Chi Router v5
+   - Firebase Admin SDK v4
+   - golang-jwt/jwt v5
+   - bcrypt (Hash password)
+   - Docker & Docker Compose (Deployment)
+
+
+================================================================
+SLIDE 7 - KESIMPULAN
+================================================================
+
+>> RINGKASAN
+
+Finance Tracker adalah aplikasi manajemen keuangan pribadi berbasis
+mobile yang dibangun menggunakan Flutter untuk frontend dan Go (Golang)
+untuk backend, dengan Firebase Firestore sebagai database NoSQL berbasis
+cloud. Aplikasi ini dirancang untuk memudahkan pengguna dalam mencatat,
+memantau, dan menganalisis kondisi keuangan pribadi mereka secara real-time
+dan aman.
+
+>> PENCAPAIAN APLIKASI
+
+[✓] Sistem autentikasi yang aman dengan JWT dan bcrypt
+[✓] CRUD transaksi lengkap dengan validasi kepemilikan data
+[✓] Dashboard informatif dengan ringkasan saldo real-time
+[✓] Visualisasi data keuangan melalui grafik interaktif
+[✓] Laporan keuangan yang bisa dibagikan
+[✓] Dukungan Dark Mode dan Light Mode
+[✓] Backend terkontainerisasi dengan Docker untuk kemudahan deployment
+[✓] Struktur data yang efisien menggunakan ID numerik berurutan
+
+>> MANFAAT UTAMA
+
+1. KEMUDAHAN  : Pencatatan transaksi yang cepat dan intuitif
+2. KEAMANAN   : Data pribadi terlindungi dengan enkripsi dan JWT
+3. INSIGHT    : Grafik dan statistik membantu keputusan finansial
+4. MOBILITAS  : Akses kapan saja dan di mana saja melalui smartphone
+5. SKALABILITAS: Backend berbasis cloud siap untuk pengguna yang berkembang
+
+>> POTENSI PENGEMBANGAN KE DEPAN
+
+- Notifikasi pengingat anggaran bulanan
+- Fitur target tabungan (saving goals)
+- Export laporan ke format PDF/Excel
+- Multi-currency support
+- Integrasi dengan rekening bank (Open Banking API)
+- Fitur berbagi keuangan untuk keluarga (Family Finance)
+
+================================================================
+                    TERIMA KASIH
+================================================================

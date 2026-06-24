@@ -12,8 +12,9 @@ import '../widgets/transaction_card.dart';
 import 'transactions_screen.dart';
 import 'add_edit_transaction_screen.dart';
 import 'login_screen.dart';
+import 'insights_screen.dart';
+import 'report_screen.dart';
 
-import '../providers/theme_provider.dart';
 import 'profile_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -96,10 +97,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 // ── App Bar ────────────────────────────────────────────────────
                 SliverAppBar(
                   expandedHeight: 0,
-                  pinned: true,
+                  pinned: false,
                   backgroundColor: Colors.transparent,
                   surfaceTintColor: Colors.transparent,
-              centerTitle: false,
+                  centerTitle: false,
               title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -288,14 +289,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
               icon: Icons.analytics_outlined,
               label: 'Insights',
               color: AppColors.primary,
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TransactionsScreen())),
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const InsightsScreen())),
             ),
             const SizedBox(width: 40), // Space for FAB
             _NavButton(
               icon: Icons.pie_chart_outline_rounded,
               label: 'Report',
               color: AppColors.accent,
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TransactionsScreen())),
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ReportScreen())),
             ),
             _NavButton(
               icon: Icons.ios_share_rounded,

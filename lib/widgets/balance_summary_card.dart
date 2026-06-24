@@ -14,7 +14,7 @@ class BalanceSummaryCard extends StatelessWidget {
     final income = (balance['total_income'] as num?)?.toDouble() ?? 0;
     final expense = (balance['total_expense'] as num?)?.toDouble() ?? 0;
 
-    final fmt = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp\n', decimalDigits: 0);
+    final fmt = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 20),
@@ -112,32 +112,15 @@ class BalanceSummaryCard extends StatelessWidget {
             ),
           ),
           
-          // Mascot Sticker overlapping
+          // Mascot Sticker hanging on top right
           Positioned(
-            left: 0,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.black, width: 3),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black,
-                    offset: Offset(4, 4),
-                    blurRadius: 0,
-                  ),
-                ],
-              ),
-              padding: const EdgeInsets.all(4),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.asset(
-                  'assets/images/lucky_cat.png',
-                  height: 64,
-                  width: 64,
-                  fit: BoxFit.cover,
-                ),
-              ),
+            right: -20,
+            top: -20,
+            child: Image.asset(
+              'assets/images/lucky_cat.png',
+              height: 64,
+              width: 64,
+              fit: BoxFit.cover,
             ),
           ),
         ],

@@ -11,6 +11,14 @@ import (
 func Auth(jwtSecret string) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// Shortcut untuk testing di Postman menggunakan User ID langsung
+			xUserID := r.Header.Get("X-User-ID")
+			if xUserID != "" {
+				ctx := context.WithValue(r.Context(), "user_id", xUserID)
+				next.ServeHTTP(w, r.WithContext(ctx))
+				return
+			}
+
 			authHeader := r.Header.Get("Authorization")
 			if authHeader == "" {
 				http.Error(w, "Missing token", http.StatusUnauthorized)

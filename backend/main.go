@@ -51,12 +51,33 @@ func main() {
 	r.Post("/register", authH.Register)
 	r.Post("/login", authH.Login)
 
+	// Path-based routes (tanpa token, menggunakan ID di URL)
+	r.Route("/{userID}", func(r chi.Router) {
+		r.Use(func(next http.Handler) http.Handler {
+			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				userID := chi.URLParam(r, "userID")
+				ctx := context.WithValue(r.Context(), "user_id", userID)
+				next.ServeHTTP(w, r.WithContext(ctx))
+			})
+		})
+
+		for _, prefix := range []string{"/transactions", "/transaction"} {
+			r.Get(prefix, txH.List)
+			r.Post(prefix, txH.Create)
+			r.Put(prefix+"/{id}", txH.Update)
+			r.Delete(prefix+"/{id}", txH.Delete)
+		}
+		r.Get("/balance", txH.GetBalance)
+		r.Get("/stats", txH.GetStats)
+	})
+
 	// Protected routes
 	r.Group(func(r chi.Router) {
 		r.Use(mw.Auth(jwtSecret))
 		
 		r.Get("/transactions", txH.List)
 		r.Post("/transactions", txH.Create)
+		r.Put("/transactions/{id}", txH.Update)
 		r.Delete("/transactions/{id}", txH.Delete)
 		r.Get("/balance", txH.GetBalance)
 		r.Get("/stats", txH.GetStats)

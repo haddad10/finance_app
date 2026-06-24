@@ -169,7 +169,7 @@ class TransactionProvider extends ChangeNotifier {
       if (result.isSuccess) {
         _transactions.removeWhere((t) => t.id == id);
         notifyListeners();
-        await loadBalance();
+        await Future.wait([loadBalance(), loadStats(), loadTransactions()]);
         return true;
       }
       _error = result.errorMessage;

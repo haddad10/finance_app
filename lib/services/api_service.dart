@@ -33,6 +33,7 @@ class ApiService {
 
   Map<String, String> get _headers => {
         'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
         if (_token != null) 'Authorization': 'Bearer $_token',
       };
 
@@ -52,7 +53,7 @@ class ApiService {
       );
       return _parseResponse(res);
     } catch (e) {
-      throw ApiException('Tidak dapat terhubung ke server. Periksa koneksi internet.');
+      throw ApiException('Koneksi gagal: $e');
     }
   }
 
@@ -79,7 +80,7 @@ class ApiService {
           .timeout(const Duration(seconds: 15));
       return _parseResponse(res);
     } catch (e) {
-      throw ApiException('Tidak dapat terhubung ke server.');
+      throw ApiException('Koneksi POST gagal: $e');
     }
   }
 
@@ -93,7 +94,7 @@ class ApiService {
           .timeout(const Duration(seconds: 15));
       return _parseResponse(res);
     } catch (e) {
-      throw ApiException('Tidak dapat terhubung ke server.');
+      throw ApiException('Koneksi PUT gagal: $e');
     }
   }
 
@@ -107,7 +108,7 @@ class ApiService {
           .timeout(const Duration(seconds: 15));
       return _parseResponse(res);
     } catch (e) {
-      throw ApiException('Tidak dapat terhubung ke server.');
+      throw ApiException('Koneksi DELETE gagal: $e');
     }
   }
 
