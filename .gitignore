@@ -50,9 +50,11 @@ app.*.map.json
 # Firebase / Google Service Account - JANGAN PERNAH DI-COMMIT!
 **/serviceAccountKey.json
 **/google-services.json
-**/*.env
+**/.env
 .env
-.env.*
+.env.local
+.env.production
+# .env.example TIDAK diabaikan (aman untuk di-commit sebagai template)
 
 # ========================
 # COMPILED BINARIES & BUILD
